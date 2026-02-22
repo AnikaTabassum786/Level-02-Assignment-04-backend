@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+
+enum OrderStatus {
+  PLACED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+}
+
+model User {
+  id String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(CUSTOMER)
+  phone    String?
+  address  String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  @@map("users")
+}
+
+model Category{
+  id   String @id @default(uuid())
+  name String @unique
+
+
+  @@map("categories")
+}
+
+model Medicine{
+  id String @id @default(uuid())
+  name String
+  description  String
+  price Decimal @db.Decimal(10,2)
+  stock Int
+  manufacturer String
+  imageURL String?
+
+  @@map("medicines")
+}
+
+model Order{
+
+  id String @id @default(uuid())
+  totalAmount Decimal @db.Decimal(10,2)
+  shippingAddress String
+  status OrderStatus @default(PLACED)
+
+  @@map("orders")
+}
+
+model Review {
+
+  id String @id @default(uuid())
+  rating Int
+  comment String?
+
+  @@unique([userId, medicineId])
+
+  @@map("reviews")
+}
+
+
+
