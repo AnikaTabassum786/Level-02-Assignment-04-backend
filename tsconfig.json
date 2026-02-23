@@ -44,7 +44,7 @@
     "esModuleInterop": true,
   },
   "include":["src/**/*"],
-  "exclude":["node_modules","dir","generated/prisma"]
+  "exclude":["node_modules","dist","generated/prisma"]
 }
 
 

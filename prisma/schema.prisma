@@ -24,6 +24,7 @@ enum OrderStatus {
   PROCESSING
   SHIPPED
   DELIVERED
+  CANCELLED 
 }
 
 model User {
@@ -32,11 +33,21 @@ model User {
   email    String @unique
   password String
   role     Role   @default(CUSTOMER)
+  isBanned Boolean @default(false)
+
+   
+  //  Relation
+  medicines Medicine[] @relation("SellerMedicines") //one to many. One seller (user) can sell many Medicine[]
+  orders    Order[]    @relation("CustomerOrders")   //one to many. One Customer (user) has many Order[]
+  reviews   Review[] //one to many. One customer(user) has many Review[]
+
   phone    String?
   address  String?
 
   createdAt     DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+
+ 
   @@map("users")
 }
 
@@ -44,6 +55,11 @@ model Category{
   id   String @id @default(uuid())
   name String @unique
 
+//  Relation
+  medicines Medicine[]  //One to many. One Category has many Medicine[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@map("categories")
 }
@@ -57,6 +73,23 @@ model Medicine{
   manufacturer String
   imageURL String?
 
+  //  Relation
+  categoryId String
+  category Category @relation(fields:[categoryId],references: [id], onDelete: Cascade)
+
+  sellerId String
+  seller User @relation("SellerMedicines",fields: [sellerId], references: [id], onDelete: Cascade)
+
+  reviews Review[]
+  orderItems OrderItem[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([categoryId])
+  @@index([sellerId])
+  @@index([name])
+
   @@map("medicines")
 }
 
@@ -67,7 +100,36 @@ model Order{
   shippingAddress String
   status OrderStatus @default(PLACED)
 
+  //Relation
+
+  customerId String
+  customer User @relation("CustomerOrders",fields: [customerId],references: [id],onDelete: Cascade)
+
+  orderItems OrderItem[] //One to Many. One Order has many order items. 
+
+  createdAt     DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([customerId])
   @@map("orders")
+}
+
+model OrderItem{
+  id String @id @default(uuid())
+  quantity Int
+  price Decimal @db.Decimal(10,2)
+
+  orderId String
+  order Order @relation(fields: [orderId],references: [id],onDelete: Cascade) //Many to one. Many order items are in one order.
+
+  medicineId String
+  medicine Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)//Many to one. Many order items are in One medicine
+
+  createdAt     DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([orderId,medicineId])
+  @@map("orderItems")
 }
 
 model Review {
@@ -76,10 +138,19 @@ model Review {
   rating Int
   comment String?
 
-  @@unique([userId, medicineId])
+  userId String
+  user User @relation(fields: [userId],references: [id], onDelete: Cascade)//Many to One. One user has many reviews
 
+  medicineId String
+  medicine Medicine @relation(fields: [medicineId],references: [id],onDelete: Cascade)//Many to one. One medicine has many reviews
+
+  createdAt     DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, medicineId])
   @@map("reviews")
 }
+
 
 
 
