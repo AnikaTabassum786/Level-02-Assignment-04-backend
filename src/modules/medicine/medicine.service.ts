@@ -19,6 +19,14 @@ const createMedicine = async (data: {
     return result
 }
 
+const getAllMedicine=async()=>{
+ const result = await prisma.medicine.findMany();
+ return result;
+}
+
 export const medicineService={
-    createMedicine
+    createMedicine,
+    getAllMedicine
+    
+
 }

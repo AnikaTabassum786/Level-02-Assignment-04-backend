@@ -1,71 +1,9 @@
-import express,{NextFunction, Request, Response, Router} from 'express'
+import express,{Router} from 'express'
 import { MedicineController } from './medicine.controller'
-import {auth as betterAuth} from '../../lib/auth'
+import auth, { Role } from '../../middlewares/auth'
+
 
 const router = express.Router()
-
-export enum Role{
-    SELLER="SELLER",
-    CUSTOMER = "CUSTOMER",
-    ADMIN= "ADMIN"
-}
-
-declare global {
-    namespace Express{
-    interface Request{
-        user?:{
-            id: string;
-            email:string;
-            name:string;
-            role:string;
-            emailVerified:boolean
-        }
-    }
-}
-}
-
-const auth =(...roles:Role[])=>{
-  return async (req:Request, res:Response,next:NextFunction)=>{
-    //   console.log(roles)
-    const session = await betterAuth.api.getSession({
-        headers:req.headers as any
-    })
-
-     if(!session){
-           return res.status(401).json({
-            success:false,
-            message:"You are not authorized"
-           })
-        }
-
-        if(!session.user.emailVerified){
-            return res.status(401).json({
-            success:false,
-            message:"Email verification required. Please verify your email!"
-           })
-        } 
-
-        req.user = {
-           id:session.user.id,
-           email:session.user.email,
-           name:session.user.name,
-           role:session.user.role as string,
-           emailVerified:session.user.emailVerified
-        }
-
-        if(roles.length && !roles.includes(req.user.role as Role)){
-             return res.status(403).json({
-            success:false,
-            message:"Forbidden! You don't have permission to access this resources!"
-           })
-        }
-
-        next()
-
-    console.log(session)
-  }
-}
-
-router.post("/",auth(Role.SELLER),MedicineController.createMedicine)
-
+router.post("/seller/medicines",auth(Role.SELLER),MedicineController.createMedicine)
+router.get("/medicines",MedicineController.getAllMedicine)
 export const medicineRouter:Router = router

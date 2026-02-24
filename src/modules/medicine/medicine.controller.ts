@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { medicineService } from "./medicine.service"
+import { success } from "better-auth/*"
 
 const createMedicine = async(req:Request,res:Response)=>{
   try{
@@ -15,6 +16,14 @@ const createMedicine = async(req:Request,res:Response)=>{
   }
 }
 
+const getAllMedicine = async(req: Request, res: Response)=>{
+ 
+   const result = await medicineService.getAllMedicine()
+    res.status(201).json(result)
+ 
+}
+
 export const MedicineController={
-    createMedicine
+    createMedicine,
+    getAllMedicine
 }

@@ -9,7 +9,7 @@ import { categoryRouter } from "./modules/category/category.router";
 const app:Application = express();
 
 app.use(express.json())
-app.use("/api/seller/medicines",medicineRouter)
+app.use("/api",medicineRouter)
 app.use("/api/categories",categoryRouter)
 
 app.use(cors({
