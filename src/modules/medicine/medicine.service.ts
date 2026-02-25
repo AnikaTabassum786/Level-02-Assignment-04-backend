@@ -1,3 +1,4 @@
+import { equal } from "node:assert";
 import { prisma } from "../../lib/prisma"
 
 
@@ -23,6 +24,9 @@ const getAllMedicine = async (payload: {
     search: string | undefined,
     category: string | undefined,
     manufacturer: string | undefined,
+    price:number|undefined,
+    minPrice:number|undefined,
+    maxPrice:number|undefined
 
 
 }) => {
@@ -52,7 +56,11 @@ const getAllMedicine = async (payload: {
         ];
     }
 
-   
+   if(payload.price !== undefined){
+      whereCondition.price={
+        equals:payload.price
+      }
+   }
 
     if (payload.category) {
         whereCondition.category = {
