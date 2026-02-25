@@ -19,10 +19,35 @@ const createMedicine = async (data: {
     return result
 }
 
-const getAllMedicine=async()=>{
- const result = await prisma.medicine.findMany();
+const getAllMedicine=async(payload:{
+    search:string|undefined,
+    category:string|undefined,
+    manufacturer:string|undefined,
+   
+
+})=>{
+
+ const result = await prisma.medicine.findMany({
+    where: {
+  OR: [
+    {
+      name: {
+        contains: payload.search as string,
+        mode: "insensitive",
+      },
+    },
+    {
+       manufacturer: {
+        contains: payload.search as string,
+        mode: "insensitive",
+      },
+    },
+  ],
+}
+ });
  return result;
 }
+
 
 export const medicineService={
     createMedicine,
