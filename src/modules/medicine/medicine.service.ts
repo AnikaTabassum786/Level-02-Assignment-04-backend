@@ -26,7 +26,10 @@ const getAllMedicine = async (payload: {
     manufacturer: string | undefined,
     price:number|undefined,
     minPrice:number|undefined,
-    maxPrice:number|undefined
+    maxPrice:number|undefined,
+    page: number,
+    limit: number,
+    skip: number,
 
 
 }) => {
@@ -62,6 +65,13 @@ const getAllMedicine = async (payload: {
       }
    }
 
+    // if (payload.minPrice !== undefined || payload.maxPrice !== undefined) {
+    //     whereCondition.price = {
+    //         gte: payload.minPrice,
+    //         lte: payload.maxPrice
+    //     };
+    // }
+
     if (payload.category) {
         whereCondition.category = {
             name: {
@@ -71,14 +81,31 @@ const getAllMedicine = async (payload: {
         };
     }
 
+    const total = await prisma.medicine.count({
+        where:whereCondition
+    })
+
     const result = await prisma.medicine.findMany({
 
         where: whereCondition,
+         skip: payload.skip,   
+        take: payload.limit, 
         include: {
             category: true,
         },
     });
-    return result;
+    // return result;
+      return {
+       
+        pagination: {
+            page: payload.page,
+            limit: payload.limit,
+            total,
+            totalPage: Math.ceil(total / payload.limit)
+
+        },
+        data:result
+    }
 }
 
 

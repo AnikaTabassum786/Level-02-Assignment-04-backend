@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { medicineService } from "./medicine.service"
+import paginationHelper from "../../helpers/Pagination"
 
 
 const createMedicine = async (req: Request, res: Response) => {
@@ -26,9 +27,12 @@ const getAllMedicine = async (req: Request, res: Response) => {
     const parsedPrice= typeof price === "string" ? Number(price) : undefined
     const parsedMinPrice = typeof minPrice === "string" ? Number(minPrice) : undefined
     const parsedMaxPrice = typeof maxPrice === "string" ? Number(maxPrice) : undefined
+    const { page, limit, skip} = paginationHelper(req.query)
+
 
     const result = await medicineService.getAllMedicine({
-      search: searchString, category: categoryString, manufacturer: manufacturerString,price:parsedPrice,minPrice: parsedMinPrice, maxPrice:parsedMaxPrice
+      search: searchString, category: categoryString, manufacturer: manufacturerString,price:parsedPrice,
+      minPrice: parsedMinPrice, maxPrice:parsedMaxPrice, page, limit, skip
     })
     res.status(201).json(result)
   }
