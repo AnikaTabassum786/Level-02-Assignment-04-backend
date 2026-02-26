@@ -44,8 +44,26 @@ const getAllMedicine = async (req: Request, res: Response) => {
   }
 }
 
+const getMedicineById=async(req: Request, res: Response)=>{
+  try {
+    const {medicineId} = req.params
+    if(!medicineId){
+      throw new Error ("Post ID is required")
+    }
+    const result = await medicineService.getMedicineById(medicineId as string)
+    res.status(201).json(result)
+  }
+  catch (e) {
+    res.status(400).json({
+      error: "Get medicine by id failed",
+      details: e
+    })
+  }
+}
+
 
 export const MedicineController = {
   createMedicine,
-  getAllMedicine
+  getAllMedicine,
+  getMedicineById
 }

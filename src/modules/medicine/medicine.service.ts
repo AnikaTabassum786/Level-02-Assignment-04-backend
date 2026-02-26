@@ -1,4 +1,3 @@
-import { equal } from "node:assert";
 import { prisma } from "../../lib/prisma"
 
 
@@ -108,8 +107,18 @@ const getAllMedicine = async (payload: {
     }
 }
 
+const getMedicineById = async(medicineId:string)=>{
+const result = await prisma.medicine.findUnique({
+    where:{
+        id:medicineId
+    }
+})
+return result
+}
+
 
 export const medicineService = {
     createMedicine,
-    getAllMedicine
+    getAllMedicine,
+    getMedicineById
 }
