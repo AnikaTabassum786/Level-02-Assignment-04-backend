@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { medicineService } from "./medicine.service"
 import paginationHelper from "../../helpers/Pagination"
+import { success } from "better-auth/*"
 
 
 const createMedicine = async (req: Request, res: Response) => {
@@ -67,13 +68,52 @@ const updateMedicineById = async (req: Request, res: Response) => {
     if (!medicineId) {
       throw new Error("Medicine ID is required")
     }
-    const result = await medicineService.updateMedicineById(medicineId as string, req.body)
-    res.status(201).json(result)
+     const updatedMedicine = await medicineService.updateMedicineById(medicineId as string,req.body)
+    if (!updatedMedicine) {
+      return res.status(404).json({
+        success: false,
+        message: "Medicine not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Medicine updated successfully",
+      data: updatedMedicine,
+    });
   }
-  catch (e) {
-    res.status(400).json({
-      error: "Update medicine by id is failed",
-      details: e
+  catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Something went wrong",
+    })
+  }
+}
+
+const deleteMedicineById = async (req: Request, res: Response) => {
+  try {
+    const { medicineId } = req.params
+    if (!medicineId) {
+      throw new Error("Medicine ID is required")
+    }
+    const deletedMedicine = await medicineService.deleteMedicineById(medicineId as string)
+
+    if (!deletedMedicine) {
+      return res.status(404).json({
+        success: false,
+        message: "Medicine not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Medicine deleted successfully"
+    })
+  }
+  catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Something went wrong",
     })
   }
 }
@@ -83,5 +123,6 @@ export const MedicineController = {
   createMedicine,
   getAllMedicine,
   getMedicineById,
-  updateMedicineById
+  updateMedicineById,
+  deleteMedicineById
 }
