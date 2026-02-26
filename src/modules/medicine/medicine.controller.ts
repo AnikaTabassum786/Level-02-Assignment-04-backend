@@ -19,20 +19,20 @@ const createMedicine = async (req: Request, res: Response) => {
 
 const getAllMedicine = async (req: Request, res: Response) => {
   try {
-    const { search, category, manufacturer,price, minPrice, maxPrice } = req.query
+    const { search, category, manufacturer, price, minPrice, maxPrice } = req.query
 
     const searchString = typeof search === 'string' ? search : undefined
     const categoryString = typeof category === "string" ? category : undefined
     const manufacturerString = typeof manufacturer === "string" ? manufacturer : undefined
-    const parsedPrice= typeof price === "string" ? Number(price) : undefined
+    const parsedPrice = typeof price === "string" ? Number(price) : undefined
     const parsedMinPrice = typeof minPrice === "string" ? Number(minPrice) : undefined
     const parsedMaxPrice = typeof maxPrice === "string" ? Number(maxPrice) : undefined
-    const { page, limit, skip} = paginationHelper(req.query)
+    const { page, limit, skip } = paginationHelper(req.query)
 
 
     const result = await medicineService.getAllMedicine({
-      search: searchString, category: categoryString, manufacturer: manufacturerString,price:parsedPrice,
-      minPrice: parsedMinPrice, maxPrice:parsedMaxPrice, page, limit, skip
+      search: searchString, category: categoryString, manufacturer: manufacturerString, price: parsedPrice,
+      minPrice: parsedMinPrice, maxPrice: parsedMaxPrice, page, limit, skip
     })
     res.status(201).json(result)
   }
@@ -44,11 +44,11 @@ const getAllMedicine = async (req: Request, res: Response) => {
   }
 }
 
-const getMedicineById=async(req: Request, res: Response)=>{
+const getMedicineById = async (req: Request, res: Response) => {
   try {
-    const {medicineId} = req.params
-    if(!medicineId){
-      throw new Error ("Post ID is required")
+    const { medicineId } = req.params
+    if (!medicineId) {
+      throw new Error("Medicine ID is required")
     }
     const result = await medicineService.getMedicineById(medicineId as string)
     res.status(201).json(result)
@@ -61,9 +61,27 @@ const getMedicineById=async(req: Request, res: Response)=>{
   }
 }
 
+const updateMedicineById = async (req: Request, res: Response) => {
+  try {
+    const { medicineId } = req.params
+    if (!medicineId) {
+      throw new Error("Medicine ID is required")
+    }
+    const result = await medicineService.updateMedicineById(medicineId as string, req.body)
+    res.status(201).json(result)
+  }
+  catch (e) {
+    res.status(400).json({
+      error: "Update medicine by id is failed",
+      details: e
+    })
+  }
+}
+
 
 export const MedicineController = {
   createMedicine,
   getAllMedicine,
-  getMedicineById
+  getMedicineById,
+  updateMedicineById
 }

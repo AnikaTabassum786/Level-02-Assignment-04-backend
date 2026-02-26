@@ -1,3 +1,4 @@
+import { Medicine } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma"
 
 
@@ -116,9 +117,21 @@ const result = await prisma.medicine.findUnique({
 return result
 }
 
+const updateMedicineById = async(medicineId:string, data: Partial<Medicine>)=>{
+    // console.log("update medicine by id")
+    const result = await prisma.medicine.update({
+        where:{
+            id:medicineId
+        },
+        data
+    })
+    return result
+}
+
 
 export const medicineService = {
     createMedicine,
     getAllMedicine,
-    getMedicineById
+    getMedicineById,
+    updateMedicineById
 }
