@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { orderService } from "./order.service";
+import { success } from "better-auth/*";
 
 
 const createOrder = async (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ const createOrder = async (req: Request, res: Response) => {
      }
      catch (e:any) {
         console.log("error",e)
-       res.status(400).json({
+        res.status(400).json({
          error: "Order creation failed",
          message:e.message,
          stack:e.stack
@@ -23,6 +24,22 @@ const createOrder = async (req: Request, res: Response) => {
      }
 };
 
+const getOwnOrder = async(req: Request, res: Response)=>{
+  try{
+    const user = req.user
+    const result = await orderService.getOwnOrder(user?.id as string, user?.role as string
+    )
+    res.status(201).json(result)
+  }
+  catch(error){
+    res.status(500).json({
+        success:false,
+         message: "Fetch order failed",
+    })
+  }
+} 
+
 export const OrderController = {
- createOrder
+ createOrder,
+ getOwnOrder
 }

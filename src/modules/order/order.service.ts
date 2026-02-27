@@ -30,7 +30,7 @@ const createOrder = async (data: {
             // const itemTotal = new Prisma.Decimal(medicine.price).mul(item.quantity);
             // totalAmount = totalAmount.add(itemTotal);
 
-            const itemTotal = Number(medicine.price) * item.quantity; 
+            const itemTotal = Number(medicine.price) * item.quantity;
             totalAmount = totalAmount + itemTotal;
 
             orderItemsData.push({
@@ -67,6 +67,29 @@ const createOrder = async (data: {
     })
 }
 
+const getOwnOrder = async (customerId: string, role: string) => {
+
+    if (role === "ADMIN") {
+        const result = await prisma.order.findMany({
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+        return result
+    }
+
+    const result = await prisma.order.findMany({
+        where: {
+            customerId
+        },
+        orderBy: {
+            createdAt: "desc"
+        }
+    })
+    return { result }
+}
+
 export const orderService = {
-    createOrder
+    createOrder,
+    getOwnOrder
 }
