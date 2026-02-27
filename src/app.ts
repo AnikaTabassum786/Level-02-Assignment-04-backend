@@ -4,6 +4,7 @@ import { auth } from './lib/auth';
 import cors from 'cors'
 import { medicineRouter } from "./modules/medicine/medicine.router";
 import { categoryRouter } from "./modules/category/category.router";
+import { orderRouter } from "./modules/order/order.route";
 
 
 const app:Application = express();
@@ -11,6 +12,7 @@ const app:Application = express();
 app.use(express.json())
 app.use("/api",medicineRouter)
 app.use("/api/categories",categoryRouter)
+app.use("/api/orders",orderRouter)
 
 app.use(cors({
 origin:process.env.APP_URL || "http://localhost:4000",
