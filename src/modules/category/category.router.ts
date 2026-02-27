@@ -1,9 +1,12 @@
 import express,{Router} from 'express'
-import { CategoryController } from './category.controller'
+import { categoryController } from './category.controller'
+
 
 
 const router = express.Router()
 
-router.post("/",CategoryController.createCategory)
+router.post("/",categoryController.createCategory)
+router.get("/",categoryController.getAllCategory)
+
 
 export const categoryRouter:Router = router
