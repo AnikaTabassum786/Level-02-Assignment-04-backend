@@ -39,7 +39,28 @@ const getOwnOrder = async(req: Request, res: Response)=>{
   }
 } 
 
+const getOrderById=async(req: Request, res: Response)=>{
+  try{
+    
+    const user = req.user
+    if (!user){
+       throw new Error("Unauthorized")
+    }
+     
+    const {orderId} = req.params
+    const result = await orderService.getOrderById(orderId as string,user?.id as string, user?.role as string )
+    res.status(201).json(result)
+  }
+  catch(error){
+    res.status(500).json({
+        success:false,
+         message: "Fetch order failed",
+    })
+  }
+}
+
 export const OrderController = {
  createOrder,
- getOwnOrder
+ getOwnOrder,
+ getOrderById
 }

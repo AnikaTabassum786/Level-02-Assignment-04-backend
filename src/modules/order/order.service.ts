@@ -89,7 +89,12 @@ const getOwnOrder = async (customerId: string, role: string) => {
     return { result }
 }
 
+const getOrderById=async(orderId:string,customerId: string, role: string)=>{
+ console.log("get order by Id")
+}
+
 export const orderService = {
     createOrder,
-    getOwnOrder
+    getOwnOrder,
+    getOrderById
 }
