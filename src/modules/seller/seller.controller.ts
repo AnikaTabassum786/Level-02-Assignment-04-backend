@@ -1,6 +1,8 @@
 import { Request, Response } from "express"
 import { SellerService } from "./seller.service"
 import { Role } from "../../../generated/prisma/enums"
+import { success } from "better-auth/*"
+import { count } from "node:console"
 
 
 const getSellerOrders = async (req: Request, res: Response) => {
@@ -11,7 +13,11 @@ const getSellerOrders = async (req: Request, res: Response) => {
         const user = req.user
         console.log("Seller is",user)
         const result = await SellerService.getSellerOrders(user!.id as string)
-        res.status(200).json(result)
+        res.status(200).json({
+            success:true,
+            count:result.length,
+            data:result
+        })
     }
     catch (error: any) {
         res.status(400).json({
