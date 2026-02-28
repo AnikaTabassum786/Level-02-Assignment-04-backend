@@ -89,8 +89,49 @@ const getOwnOrder = async (customerId: string, role: string) => {
     return { result }
 }
 
-const getOrderById=async(orderId:string,customerId: string, role: string)=>{
- console.log("get order by Id")
+const getOrderById=async(orderId:string,userId: string, role: string)=>{
+
+ const result = await prisma.order.findUnique({
+    where:{id: orderId},
+    include:{
+        orderItems:{
+            include:{
+                medicine:true
+            }
+        },
+        customer:true
+    }
+ })
+
+ if(!result){
+    throw new Error("Order Not found")
+ }
+
+ if(role==="ADMIN"){
+    return result
+ }
+
+ if(role==="CUSTOMER"){
+   if( result.customerId === userId){
+    return result
+   }
+   else{
+    throw new Error ("Not Authorized")
+   }
+ }
+ 
+ if(role==="SELLER"){
+    const sellerItems = result.orderItems.some(
+        (item)=>item.medicine.sellerId === userId
+    )
+
+    if(sellerItems){
+         return result
+    }
+    else{
+        throw new Error ("Not Authorized") 
+    }
+}
 }
 
 export const orderService = {

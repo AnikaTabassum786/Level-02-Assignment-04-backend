@@ -29,12 +29,12 @@ const getOwnOrder = async(req: Request, res: Response)=>{
     const user = req.user
     const result = await orderService.getOwnOrder(user?.id as string, user?.role as string
     )
-    res.status(201).json(result)
+    res.status(200).json(result)
   }
-  catch(error){
-    res.status(500).json({
+  catch(error:any){
+    res.status(400).json({
         success:false,
-         message: "Fetch order failed",
+         message: error.message || "Fetch order failed",
     })
   }
 } 
@@ -49,14 +49,25 @@ const getOrderById=async(req: Request, res: Response)=>{
      
     const {orderId} = req.params
     const result = await orderService.getOrderById(orderId as string,user?.id as string, user?.role as string )
-    res.status(201).json(result)
+    res.status(200).json(result)
   }
-  catch(error){
-    res.status(500).json({
-        success:false,
-         message: "Fetch order failed",
+  catch(error:any){
+    let statusCode = 500
+    
+  if (error.message === "Not Authorized") {
+    statusCode = 403
+  }
+
+  if(error.message === "Order Not found"){
+    statusCode = 404
+  }
+    res.status(statusCode).json({
+      success:false,
+      message:error.message || "Internal Server Error"
     })
   }
+
+
 }
 
 export const OrderController = {
