@@ -5,5 +5,6 @@ import { SellerController } from './seller.controller'
 
 const router = express.Router()
 router.get("/",auth(Role.SELLER),SellerController.getSellerOrders)
+router.patch("/:orderId",auth(Role.SELLER),SellerController.updateOrderStatusBySeller)
 
 export const sellerRouter:Router = router
