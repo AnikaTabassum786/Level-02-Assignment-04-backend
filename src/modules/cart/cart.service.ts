@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 
 interface CreatedCartPayload{
@@ -79,9 +80,33 @@ const createCart = async (payload:CreatedCartPayload,userId:string) => {
  
 };
 
+const deleteCart = async(cartId:string,customerId:string,role:string)=>{
+// console.log("delete cart")
+  const cart = await prisma.cart.findUnique({
+    where:{id:cartId},
+    include:{cartItems:true}
+  })
 
+  if(!cart){
+    throw new Error("Cart not found")
+  }
+
+  if(cart.userId !==customerId){
+ throw new Error("You are not allowed to delete this cart")
+  }
+
+  const deleteAllCartItems = await prisma.cartItem.deleteMany({
+    where:{cartId}
+  }) 
+
+  const result = await prisma.cart.delete({
+    where:{id:cartId}
+  })
+
+return result
+}
 
 export const cartService = {
   createCart,
-
+  deleteCart
 };

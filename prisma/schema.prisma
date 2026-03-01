@@ -156,7 +156,7 @@ model Review {
 model Cart{
   id String @id @default(uuid())
   userId String @unique
-  user User @relation(fields: [userId],references: [id])
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
   cartItems CartItem[]
 
   createdAt DateTime @default(now())
@@ -169,7 +169,7 @@ model CartItem{
   cartId String
   cart Cart @relation(fields: [cartId],references: [id])
   medicineId String 
-  medicine Medicine @relation(fields: [medicineId],references: [id])
+  medicine Medicine @relation(fields: [medicineId],references: [id],onDelete: Cascade)
   quantity Int
 
   @@map("cartItems")
