@@ -44,8 +44,30 @@ catch (error) {
   }
 }
 
+const getAllOwnCartItems=async(req: Request, res: Response)=>{
+ try{
+    const user = req.user
+     if (!user){
+       throw new Error("Unauthorized")
+    }
+   const result = await cartService.getAllOwnCartItems(user.id)
+    return res.status(200).json({
+      success:true,
+      message:"Cart Items fetched successfully",
+      data:result
+    })
+ }
+ catch(error:any){
+return res.status(500).json({
+     success:false,
+     message:error?.message || "Cart Items fetch failed"
+    })
+ }
+}
+
 
 export const cartController = {
   createCart,
-   deleteCart
+   deleteCart,
+   getAllOwnCartItems
 };

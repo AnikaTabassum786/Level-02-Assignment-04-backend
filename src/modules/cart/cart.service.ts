@@ -106,7 +106,43 @@ const deleteCart = async(cartId:string,customerId:string,role:string)=>{
 return result
 }
 
+const getAllOwnCartItems = async(customerId:string)=>{
+    const cart = await prisma.cart.findUnique({
+       where:{userId:customerId},
+       include:{
+        cartItems:{
+          include:{
+            medicine:true
+          }
+        }
+       }
+    })
+
+    if(!cart){
+      return{
+        cartItems:[],
+        totalPrice:0
+      }
+    }
+
+
+    const totalPrice = cart.cartItems.reduce((total,item)=>{
+      return total+item.quantity * (item.medicine.price).toNumber()
+    },0)
+
+    return {
+      items:cart.cartItems,
+      totalPrice
+    }
+  
+}
+
+
+
+
+
 export const cartService = {
   createCart,
-  deleteCart
+  deleteCart,
+  getAllOwnCartItems
 };
