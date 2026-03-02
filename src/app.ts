@@ -7,6 +7,7 @@ import { categoryRouter } from "./modules/category/category.router";
 import { orderRouter } from "./modules/order/order.route";
 import { sellerRouter } from "./modules/seller/seller.route";
 import { cartRouter } from "./modules/cart/cart.route";
+import { profileRouter } from "./modules/profile/profile.route";
 
 
 const app:Application = express();
@@ -17,6 +18,7 @@ app.use("/api/categories",categoryRouter)
 app.use("/api/orders",orderRouter)
 app.use("/api/seller/orders",sellerRouter)
 app.use("/api/cart",cartRouter)
+app.use("/api/profile",profileRouter)
 
 app.use(cors({
 origin:process.env.APP_URL || "http://localhost:4000",
