@@ -15,6 +15,7 @@ const getSellerOrders = async (req: Request, res: Response) => {
         res.status(200).json({
             success:true,
             count:result.length,
+            message:"Fetched Order Successfully",
             data:result
         })
     }
@@ -49,6 +50,7 @@ const updateOrderStatusBySeller= async(req: Request, res: Response)=>{
        const result = await SellerService.updateOrderStatusBySeller(orderId as string, user!.id as string,status)
     res.status(200).json({
       success: true,
+       message:"Update Order Successfully",
       data: result
     })
     }

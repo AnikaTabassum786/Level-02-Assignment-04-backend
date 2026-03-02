@@ -30,7 +30,7 @@ const deleteCart = async(req:Request,res:Response)=>{
      const {cartId} = req.params
 
      const result = await cartService.deleteCart(cartId as string,user!.id as string,user.role as string)
-     res.status(201).json({
+     res.status(200).json({
       success: true,
       message: "Items deleted successfully",
       data: result,

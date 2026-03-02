@@ -23,7 +23,7 @@ const createCategory = async (req: Request, res: Response) => {
 const getAllCategory=async(req: Request, res: Response)=>{
    try {
     const result = await categoryService.getAllCategory()
-    return res.status(201).json({
+    return res.status(200).json({
       success:true,
       message:"Category fetched successfully",
       data:result

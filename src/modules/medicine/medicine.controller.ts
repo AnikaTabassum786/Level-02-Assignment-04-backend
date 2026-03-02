@@ -4,6 +4,7 @@ import paginationHelper from "../../helpers/Pagination"
 import { success } from "better-auth/*"
 
 
+
 const createMedicine = async (req: Request, res: Response) => {
   try {
    
@@ -12,11 +13,15 @@ const createMedicine = async (req: Request, res: Response) => {
     throw new Error("Unauthorized")
     }
     const result = await medicineService.createMedicine(req.body,user?.id as string)
-    res.status(201).json(result)
+    res.status(201).json({
+      success:true,
+      message:"Medicine Created Successfully",
+      data:result
+    })
   }
   catch (e) {
     res.status(400).json({
-      error: "Medicine creation failed",
+      error: "Medicine Creation Failed",
       details: e
     })
   }
@@ -39,7 +44,11 @@ const getAllMedicine = async (req: Request, res: Response) => {
       search: searchString, category: categoryString, manufacturer: manufacturerString, price: parsedPrice,
       minPrice: parsedMinPrice, maxPrice: parsedMaxPrice, page, limit, skip
     })
-    res.status(200).json(result)
+    res.status(200).json({
+       success:true,
+      message:"Medicine Fetched Successfully",
+      data:result
+    })
   }
   catch (e) {
     res.status(400).json({
@@ -77,13 +86,13 @@ const updateMedicineById = async (req: Request, res: Response) => {
     if (!updatedMedicine) {
       return res.status(404).json({
         success: false,
-        message: "Medicine not found",
+        message: "Medicine Not Found",
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Medicine updated successfully",
+      message: "Medicine Updated Successfully",
       data: updatedMedicine,
     });
   }
