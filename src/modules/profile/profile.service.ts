@@ -1,3 +1,4 @@
+import { User } from "../../../generated/prisma/client"
 import { prisma } from "../../lib/prisma"
 
 const getProfileInfoByUser=async(userId:string)=>{
@@ -21,6 +22,19 @@ const getProfileInfoByUser=async(userId:string)=>{
     return result
 }
 
+const updateProfileInfo=async(userId:string,data: Partial<User>)=>{
+    console.log("Update profile info",userId)
+
+     const result = await prisma.user.update({
+        where: {
+            id: userId
+        },
+        data
+    })
+    return result
+}
+
 export const ProfileService = {
  getProfileInfoByUser,
+ updateProfileInfo
 };
