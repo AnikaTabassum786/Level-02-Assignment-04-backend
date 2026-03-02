@@ -6,8 +6,12 @@ import { success } from "better-auth/*"
 
 const createMedicine = async (req: Request, res: Response) => {
   try {
-    console.log(req.user)
-    const result = await medicineService.createMedicine(req.body)
+   
+    const user = req.user
+    if(!user?.id){
+    throw new Error("Unauthorized")
+    }
+    const result = await medicineService.createMedicine(req.body,user?.id as string)
     res.status(201).json(result)
   }
   catch (e) {
@@ -35,7 +39,7 @@ const getAllMedicine = async (req: Request, res: Response) => {
       search: searchString, category: categoryString, manufacturer: manufacturerString, price: parsedPrice,
       minPrice: parsedMinPrice, maxPrice: parsedMaxPrice, page, limit, skip
     })
-    res.status(201).json(result)
+    res.status(200).json(result)
   }
   catch (e) {
     res.status(400).json({
@@ -52,7 +56,7 @@ const getMedicineById = async (req: Request, res: Response) => {
       throw new Error("Medicine ID is required")
     }
     const result = await medicineService.getMedicineById(medicineId as string)
-    res.status(201).json(result)
+    res.status(200).json(result)
   }
   catch (e) {
     res.status(400).json({
@@ -65,10 +69,11 @@ const getMedicineById = async (req: Request, res: Response) => {
 const updateMedicineById = async (req: Request, res: Response) => {
   try {
     const { medicineId } = req.params
+    const user = req.user
     if (!medicineId) {
       throw new Error("Medicine ID is required")
     }
-     const updatedMedicine = await medicineService.updateMedicineById(medicineId as string,req.body)
+     const updatedMedicine = await medicineService.updateMedicineById(medicineId as string,user?.id as string,req.body)
     if (!updatedMedicine) {
       return res.status(404).json({
         success: false,

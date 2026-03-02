@@ -10,11 +10,19 @@ const createMedicine = async (data: {
     manufacturer: string;
     imageURL?: string;
     categoryId: string;
-    sellerId: string;
-}) => {
+
+}, sellerId: string) => {
+
+    const category = await prisma.category.findUnique({
+        where: { id: data.categoryId }
+    })
+    if (!category) {
+        throw new Error("Category not found")
+    }
     const result = await prisma.medicine.create({
         data: {
             ...data,
+            sellerId
         }
     })
     return result
@@ -24,9 +32,9 @@ const getAllMedicine = async (payload: {
     search: string | undefined,
     category: string | undefined,
     manufacturer: string | undefined,
-    price:number|undefined,
-    minPrice:number|undefined,
-    maxPrice:number|undefined,
+    price: number | undefined,
+    minPrice: number | undefined,
+    maxPrice: number | undefined,
     page: number,
     limit: number,
     skip: number,
@@ -34,7 +42,7 @@ const getAllMedicine = async (payload: {
 
 }) => {
     const whereCondition: any = {};
-     
+
 
     if (payload.search) {
         whereCondition.OR = [
@@ -59,17 +67,30 @@ const getAllMedicine = async (payload: {
         ];
     }
 
-   if(payload.price !== undefined){
-      whereCondition.price={
-        equals:payload.price
-      }
-   }
+    if (payload.price !== undefined) {
+        whereCondition.price = {
+            equals: payload.price
+        }
+    }
 
     // if (payload.minPrice !== undefined || payload.maxPrice !== undefined) {
     //     whereCondition.price = {
     //         gte: payload.minPrice,
     //         lte: payload.maxPrice
     //     };
+    // }
+
+
+    //     if (payload.minPrice !== undefined || payload.maxPrice !== undefined) {
+    //   whereCondition.price = {}
+
+    //   if (payload.minPrice !== undefined) {
+    //     whereCondition.price.gte = payload.minPrice
+    //   }
+
+    //   if (payload.maxPrice !== undefined) {
+    //     whereCondition.price.lte = payload.maxPrice
+    //   }
     // }
 
     if (payload.category) {
@@ -82,21 +103,21 @@ const getAllMedicine = async (payload: {
     }
 
     const total = await prisma.medicine.count({
-        where:whereCondition
+        where: whereCondition
     })
 
     const result = await prisma.medicine.findMany({
 
         where: whereCondition,
-         skip: payload.skip,   
-        take: payload.limit, 
+        skip: payload.skip,
+        take: payload.limit,
         include: {
             category: true,
         },
     });
     // return result;
-      return {
-       
+    return {
+
         pagination: {
             page: payload.page,
             limit: payload.limit,
@@ -104,37 +125,59 @@ const getAllMedicine = async (payload: {
             totalPage: Math.ceil(total / payload.limit)
 
         },
-        data:result
+        data: result
     }
 }
 
-const getMedicineById = async(medicineId:string)=>{
-const result = await prisma.medicine.findUnique({
-    where:{
-        id:medicineId
-    }
-})
-return result
+const getMedicineById = async (medicineId: string) => {
+    const result = await prisma.medicine.findUnique({
+        where: {
+            id: medicineId
+        },
+        include: {
+            category: true,
+            seller: {
+                select: {
+                    id: true,
+                    name: true,
+                }
+            },
+            reviews: true
+        }
+    })
+    return result
 }
 
-const updateMedicineById = async(medicineId:string, data: Partial<Medicine>)=>{
+const updateMedicineById = async (medicineId: string, sellerId: string, data: Partial<Medicine>) => {
     // console.log("update medicine by id")
+
+    const existing = await prisma.medicine.findFirst({
+        where: {
+            id: medicineId,
+            sellerId: sellerId
+        }
+    })
+
+    if (!existing) {
+        throw new Error("Not authorized or medicine not found")
+    }
+
     const result = await prisma.medicine.update({
-        where:{
-            id:medicineId
+        where: {
+            id: medicineId
         },
         data
     })
     return result
 }
 
-const deleteMedicineById = async(medicineId:string)=>{
+const deleteMedicineById = async (medicineId: string) => {
     // console.log("delete medicine")
     const result = await prisma.medicine.delete({
-        where:{
-            id:medicineId
+        where: {
+            id: medicineId
         }
-      
+
     })
     return result
 }
