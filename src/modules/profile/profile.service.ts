@@ -34,7 +34,7 @@ const updateProfileInfo=async(userId:string,data: Partial<User>)=>{
     return result
 }
 
-export const ProfileService = {
+export const profileService = {
  getProfileInfoByUser,
  updateProfileInfo
 };

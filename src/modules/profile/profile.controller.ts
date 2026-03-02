@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
-import { ProfileService } from "./profile.service"
+import { profileService } from "./profile.service"
+
 
 
 const getProfileInfoByUser = async (req: Request, res: Response) => {
@@ -8,7 +9,7 @@ const getProfileInfoByUser = async (req: Request, res: Response) => {
         if (!user?.id) {
             throw new Error("Unauthorized")
         }
-        const result = await ProfileService.getProfileInfoByUser(user.id as string)
+        const result = await profileService.getProfileInfoByUser(user.id as string)
         res.status(200).json({
             success: true,
             message: "Profile Fetched Successfully",
@@ -29,7 +30,7 @@ const updateProfileInfo = async (req: Request, res: Response) => {
         if (!user?.id) {
             throw new Error("Unauthorized")
         }
-        const result = await ProfileService.updateProfileInfo(user.id as string,req.body)
+        const result = await profileService.updateProfileInfo(user.id as string,req.body)
          res.status(200).json({
             success: true,
             message: "Profile Fetched Successfully",
