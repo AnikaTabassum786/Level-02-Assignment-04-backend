@@ -18,8 +18,31 @@ const getAllOrders = async () => {
     return result
 }
 
+const toggleBanUser = async(userId:string)=>{
+  const existingUser = await prisma.user.findUnique({
+    where:{
+        id:userId
+    }
+  })
 
+   if(!existingUser){
+       throw new Error("Admin can not be banned") 
+    }
+
+
+    const result = await prisma.user.update({
+        where:{
+            id:userId
+        },
+        data:{
+           isBanned:!existingUser.isBanned
+        }
+
+    })
+    return result
+}
 export const adminService = {
     getAllUsers,
-    getAllOrders
+    getAllOrders,
+    toggleBanUser
 };

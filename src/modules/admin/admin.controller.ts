@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { adminService } from "./admin.service";
+import { success } from "better-auth/*";
 
 
 const getAllUsers = async (req: Request, res: Response) => {
@@ -20,9 +21,9 @@ const getAllUsers = async (req: Request, res: Response) => {
 }
 
 
-
 const getAllOrders = async (req: Request, res: Response) => {
     try {
+        
         const result = await adminService.getAllOrders()
         res.status(200).json({
             success: true,
@@ -38,7 +39,33 @@ const getAllOrders = async (req: Request, res: Response) => {
     }
 }
 
+const toggleBanUser = async(req: Request, res: Response)=>{
+ try{
+    const {userId} = req.params
+
+    if(!userId){
+       throw new Error ("User ID is required")
+    }
+
+    const result = await adminService.toggleBanUser(userId as string)
+
+    return res.status(200).json({
+        success:true,
+        message:result.isBanned ?"User banned successfully":"User unbanned successfully",
+        data:result
+        
+    })
+ }
+ catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || "Failed",
+        })
+    }
+}
+
 export const adminController = {
     getAllUsers,
-    getAllOrders
+    getAllOrders,
+    toggleBanUser
 };
