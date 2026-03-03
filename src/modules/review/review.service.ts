@@ -75,6 +75,8 @@ const getAllReviews = async () => {
 
 
 const updateReview = async (reviewId: string, userId: string, data: Partial<Review>) => {
+
+   
     const review = await prisma.review.findUnique({
         where: {
             id: reviewId
@@ -83,6 +85,10 @@ const updateReview = async (reviewId: string, userId: string, data: Partial<Revi
 
     if (!review) {
         throw new Error("Review is not found")
+    }
+
+    if(review.userId !== userId){
+        throw new Error("You are not authorized to update this review")
     }
 
     if (data.rating && (data.rating < 1 || data.rating > 5)) {
