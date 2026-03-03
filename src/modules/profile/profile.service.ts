@@ -11,7 +11,17 @@ const getProfileInfoByUser=async(userId:string)=>{
             phone:true,
             address:true,
             image:true,
-            role:true
+            role:true,
+
+            reviews:{
+                select:{
+                    id:true,
+                    rating:true,
+                    comment:true,
+                    medicineId:true,
+                    createdAt:true
+                }
+            }
 
         }
     })
