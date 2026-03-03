@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { reviewService } from "./review.service"
 
 
+
 const createReview = async(req: Request, res: Response)=>{
     try {
       
@@ -25,6 +26,8 @@ const createReview = async(req: Request, res: Response)=>{
      }
 }
 
+
+
 const getAllReviews=async(req: Request, res: Response)=>{
  try{
    const result  = await reviewService.getAllReviews()
@@ -43,7 +46,34 @@ res.status(400).json({
  }
 }
 
+
+
+const updateReview=async(req: Request, res: Response)=>{
+ try{
+    const user = req.user
+    const {reviewId} = req.params
+    if (!user?.id) {
+            throw new Error("Unauthorized")
+        }
+   const result = await reviewService.updateReview(reviewId as string,user.id as string, req.body)
+   res.status(201).json({
+            success: true,
+            message: "Updated  Successfully",
+            data: result
+        })
+ }
+ catch(error: any){
+res.status(500).json({
+            success: false,
+            message: error.message || "Update Failed",
+        }) 
+ }
+}
+
+
+
 export const reviewController = {
     createReview,
-    getAllReviews
+    getAllReviews,
+    updateReview
 }
