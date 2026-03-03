@@ -71,9 +71,32 @@ res.status(500).json({
 }
 
 
+const deleteReview=async(req: Request, res: Response)=>{
+   try{
+     const user = req.user
+      const {reviewId} = req.params
+       if (!user?.id) {
+            throw new Error("Unauthorized")
+        }
+    const result = await reviewService.deleteReview(reviewId as string, user.id as string)
+    res.status(200).json({
+      success: true,
+      message: "Review deleted successfully",
+       data: result
+    })
+   }
+   catch(error:any){
+ return res.status(500).json({
+      success: false,
+      message: error?.message || "Something went wrong",
+    })
+   }
+}
+
 
 export const reviewController = {
     createReview,
     getAllReviews,
-    updateReview
+    updateReview,
+    deleteReview
 }

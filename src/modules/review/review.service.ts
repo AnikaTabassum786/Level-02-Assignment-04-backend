@@ -72,11 +72,7 @@ const getAllReviews = async () => {
     return result
 }
 
-
-
 const updateReview = async (reviewId: string, userId: string, data: Partial<Review>) => {
-
-   
     const review = await prisma.review.findUnique({
         where: {
             id: reviewId
@@ -87,7 +83,7 @@ const updateReview = async (reviewId: string, userId: string, data: Partial<Revi
         throw new Error("Review is not found")
     }
 
-    if(review.userId !== userId){
+    if (review.userId !== userId) {
         throw new Error("You are not authorized to update this review")
     }
 
@@ -104,9 +100,32 @@ const updateReview = async (reviewId: string, userId: string, data: Partial<Revi
     return result
 }
 
+const deleteReview = async (reviewId: string, userId: string) => {
+    const review = await prisma.review.findUnique({
+        where: {
+            id: reviewId
+        }
+    })
+    if (!review) {
+        throw new Error("Review is not found")
+    }
+    if (review.userId !== userId) {
+        throw new Error("You are not authorized to update this review")
+    }
+    const result = await prisma.review.delete({
+        where: {
+            id: reviewId
+        }
+
+    })
+    return result
+
+}
+
 
 export const reviewService = {
     createReview,
     getAllReviews,
-    updateReview
+    updateReview,
+    deleteReview
 };
