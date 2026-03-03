@@ -1,0 +1,49 @@
+import { prisma } from "../../lib/prisma";
+
+const createReview = async (payload: { medicineId: string; rating: number; comment?: string }, userId: string) => {
+    console.log("Create Review")
+    const { medicineId, rating, comment } = payload
+
+    if (rating < 1 || rating > 5) {
+        throw new Error("Rating Must be between 1 to 5 ")
+    }
+
+    const medicine = await prisma.medicine.findUnique({
+        where: { id: medicineId }
+    })
+
+    if (!medicine) {
+        throw new Error("Medicine not found")
+    }
+
+    const purchased = await prisma.order.findFirst({
+        where:{
+            customerId:userId,
+            orderItems:{
+                some:{
+                    medicineId:medicineId
+                }
+            }
+        }
+    })
+
+    if(!purchased){
+        throw new Error("You can only review purchased medicines")
+    }
+
+    const result = await prisma.review.create({
+        data:{
+            rating,
+            comment:comment  ?? null,
+            userId,
+            medicineId
+        }
+        
+    })
+
+    return result
+}
+
+export const reviewService = {
+    createReview
+};

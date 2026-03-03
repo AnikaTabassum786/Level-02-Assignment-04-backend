@@ -9,6 +9,7 @@ import { sellerRouter } from "./modules/seller/seller.route";
 import { cartRouter } from "./modules/cart/cart.route";
 import { profileRouter } from "./modules/profile/profile.route";
 import { adminRouter } from "./modules/admin/admin.route";
+import { reviewRouter } from "./modules/review/review.route";
 
 
 const app:Application = express();
@@ -21,6 +22,7 @@ app.use("/api/seller/orders",sellerRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/profile",profileRouter)
 app.use("/api/admin",adminRouter)
+app.use("/api/review",reviewRouter)
 
 
 app.use(cors({
