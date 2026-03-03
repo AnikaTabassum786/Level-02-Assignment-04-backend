@@ -4,6 +4,7 @@ import auth, { Role } from '../../middlewares/auth'
 
 const router = express.Router()
 router.post("/",auth(Role.CUSTOMER),reviewController.createReview)
+router.get("/",reviewController.getAllReviews)
 
 
 export const reviewRouter:Router = router

@@ -25,6 +25,25 @@ const createReview = async(req: Request, res: Response)=>{
      }
 }
 
+const getAllReviews=async(req: Request, res: Response)=>{
+ try{
+   const result  = await reviewService.getAllReviews()
+   res.status(200).json({
+         success:true,
+         message:"Review Fetched Successfully",
+         data:result
+       })
+ }
+ catch(error:any){
+res.status(400).json({
+         error: "Review Creation Failed",
+         details: error,
+          message: error.message || "Review Fetched Failed"
+       })
+ }
+}
+
 export const reviewController = {
-    createReview
+    createReview,
+    getAllReviews
 }
