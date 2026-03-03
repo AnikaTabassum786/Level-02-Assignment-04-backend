@@ -41,8 +41,21 @@ const toggleBanUser = async(userId:string)=>{
     })
     return result
 }
+
+const getAllReviews = async()=>{
+    const result = await prisma.review.findMany({
+        orderBy:{
+            createdAt:"desc"
+        }
+    })
+    return result
+}
+
+
+
 export const adminService = {
     getAllUsers,
     getAllOrders,
-    toggleBanUser
+    toggleBanUser,
+    getAllReviews
 };

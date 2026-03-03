@@ -64,8 +64,27 @@ const toggleBanUser = async(req: Request, res: Response)=>{
     }
 }
 
+const getAllReviews=async(req: Request, res: Response)=>{
+ try {
+        
+        const result = await adminService.getAllReviews()
+        res.status(200).json({
+            success: true,
+            message: "Reviews Fetched Successfully",
+            data: result
+        })
+    }
+    catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || "Reviews Fetch Failed",
+        })
+    }
+}
+
 export const adminController = {
     getAllUsers,
     getAllOrders,
-    toggleBanUser
+    toggleBanUser,
+    getAllReviews
 };
