@@ -82,9 +82,28 @@ const getAllReviews=async(req: Request, res: Response)=>{
     }
 }
 
+const deleteReview= async(req: Request, res: Response)=>{
+try {
+        const {deleteId} = req.params
+        const result = await adminService.deleteReview(deleteId as string)
+        res.status(200).json({
+            success: true,
+            message: "Review Deleted Successfully",
+            data: result
+        })
+    }
+    catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || "Reviews Deleted Failed",
+        })
+    }
+}
+
 export const adminController = {
     getAllUsers,
     getAllOrders,
     toggleBanUser,
-    getAllReviews
+    getAllReviews,
+    deleteReview
 };

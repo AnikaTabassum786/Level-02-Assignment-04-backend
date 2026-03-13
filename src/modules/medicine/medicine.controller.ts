@@ -75,34 +75,74 @@ const getMedicineById = async (req: Request, res: Response) => {
   }
 }
 
+// const updateMedicineById = async (req: Request, res: Response) => {
+//   try {
+//     const { medicineId } = req.params
+//     const user = req.user
+//     if (!medicineId) {
+//       throw new Error("Medicine ID is required")
+//     }
+//      const updatedMedicine = await medicineService.updateMedicineById(medicineId as string,user?.id as string,req.body)
+//     if (!updatedMedicine) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Medicine Not Found",
+//       });
+//     }
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Medicine Updated Successfully",
+//       data: updatedMedicine,
+//     });
+//   }
+//   catch (error: any) {
+//     return res.status(500).json({
+//       success: false,
+//       message: error?.message || "Something went wrong",
+//     })
+//   }
+// }
+
+
 const updateMedicineById = async (req: Request, res: Response) => {
   try {
-    const { medicineId } = req.params
-    const user = req.user
-    if (!medicineId) {
-      throw new Error("Medicine ID is required")
-    }
-     const updatedMedicine = await medicineService.updateMedicineById(medicineId as string,user?.id as string,req.body)
-    if (!updatedMedicine) {
-      return res.status(404).json({
+    const { medicineId } = req.params;
+
+    // Ensure medicineId is a string
+    if (!medicineId || Array.isArray(medicineId)) {
+      return res.status(400).json({
         success: false,
-        message: "Medicine Not Found",
+        message: "Invalid Medicine ID",
       });
     }
 
-    return res.status(200).json({
+    const user = req.user;
+    const data = { ...req.body };
+
+    if (req.file) {
+      data.imageURL = `/uploads/${req.file.filename}`;
+    }
+
+    const updatedMedicine = await medicineService.updateMedicineById(
+      medicineId,
+      user?.id as string,
+      data
+    );
+
+    res.status(200).json({
       success: true,
       message: "Medicine Updated Successfully",
       data: updatedMedicine,
     });
-  }
-  catch (error: any) {
-    return res.status(500).json({
+  } catch (error: any) {
+    res.status(500).json({
       success: false,
       message: error?.message || "Something went wrong",
-    })
+    });
   }
-}
+};
+
 
 const deleteMedicineById = async (req: Request, res: Response) => {
   try {

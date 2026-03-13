@@ -51,11 +51,22 @@ const getAllReviews = async()=>{
     return result
 }
 
+const deleteReview= async(deleteId:string)=>{
+    // console.log("Delete User",deleteId)
+    const result = await prisma.review.delete({
+        where:{
+            id:deleteId
+        }
+    })
+    return result
+}
+
 
 
 export const adminService = {
     getAllUsers,
     getAllOrders,
     toggleBanUser,
-    getAllReviews
+    getAllReviews,
+    deleteReview
 };

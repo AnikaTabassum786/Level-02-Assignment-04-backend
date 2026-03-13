@@ -149,8 +149,6 @@ const getMedicineById = async (medicineId: string) => {
 }
 
 const updateMedicineById = async (medicineId: string, sellerId: string, data: Partial<Medicine>) => {
-    // console.log("update medicine by id")
-
     const existing = await prisma.medicine.findFirst({
         where: {
             id: medicineId,
@@ -170,6 +168,9 @@ const updateMedicineById = async (medicineId: string, sellerId: string, data: Pa
     })
     return result
 }
+
+
+
 
 const deleteMedicineById = async (medicineId: string) => {
     // console.log("delete medicine")
