@@ -65,6 +65,12 @@ const createCart = async (payload:CreatedCartPayload,userId:string) => {
         quantity:existingItem?.quantity+quantity
       }
     })
+
+     await prisma.medicine.update({
+      where: { id: medicineId },
+      data: { stock: medicine.stock - quantity },
+    });
+
     return updateCartItem
   }
 
@@ -76,35 +82,40 @@ const createCart = async (payload:CreatedCartPayload,userId:string) => {
     }
   })
 
+    await prisma.medicine.update({
+    where: { id: medicineId },
+    data: { stock: medicine.stock - quantity },
+  });
+
   return result
  
 };
 
-const deleteCart = async(cartId:string,customerId:string,role:string)=>{
-// console.log("delete cart")
-  const cart = await prisma.cart.findUnique({
-    where:{id:cartId},
-    include:{cartItems:true}
-  })
+// const deleteCart = async(cartId:string,customerId:string,role:string)=>{
+// // console.log("delete cart")
+//   const cart = await prisma.cart.findUnique({
+//     where:{id:cartId},
+//     include:{cartItems:true}
+//   })
 
-  if(!cart){
-    throw new Error("Cart not found")
-  }
+//   if(!cart){
+//     throw new Error("Cart not found")
+//   }
 
-  if(cart.userId !==customerId){
- throw new Error("You are not allowed to delete this cart")
-  }
+//   if(cart.userId !==customerId){
+//  throw new Error("You are not allowed to delete this cart")
+//   }
 
-  const deleteAllCartItems = await prisma.cartItem.deleteMany({
-    where:{cartId}
-  }) 
+//   const deleteAllCartItems = await prisma.cartItem.deleteMany({
+//     where:{cartId}
+//   }) 
 
-  const result = await prisma.cart.delete({
-    where:{id:cartId}
-  })
+//   const result = await prisma.cart.delete({
+//     where:{id:cartId}
+//   })
 
-return result
-}
+// return result
+// }
 
 const getAllOwnCartItems = async(customerId:string)=>{
     const cart = await prisma.cart.findUnique({
@@ -137,12 +148,36 @@ const getAllOwnCartItems = async(customerId:string)=>{
   
 }
 
+const deleteCartItem = async (cartItemId: string, userId: string) => {
+  const item = await prisma.cartItem.findUnique({
+    where: { id: cartItemId },
+    include: { cart: true, medicine: true },
+  });
 
+  if (!item) throw new Error("Cart item not found");
+
+  if (item.cart.userId !== userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // restore stock
+  await prisma.medicine.update({
+    where: { id: item.medicineId },
+    data: {
+      stock: item.medicine.stock + item.quantity,
+    },
+  });
+
+  return await prisma.cartItem.delete({
+    where: { id: cartItemId },
+  });
+};
 
 
 
 export const cartService = {
   createCart,
-  deleteCart,
-  getAllOwnCartItems
+  // deleteCart,
+  getAllOwnCartItems,
+  deleteCartItem
 };

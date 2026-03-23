@@ -5,7 +5,7 @@ import { prisma } from "../../lib/prisma"
 const createMedicine = async (data: {
     name: string;
     description: string;
-    price: string; // because Decimal
+    price: number; // because Decimal
     stock: number;
     manufacturer: string;
     imageURL?: string;

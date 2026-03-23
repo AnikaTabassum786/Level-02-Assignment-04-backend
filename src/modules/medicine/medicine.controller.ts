@@ -5,25 +5,54 @@ import { success } from "better-auth/*"
 
 
 
+// const createMedicine = async (req: Request, res: Response) => {
+//   try {
+   
+//     const user = req.user
+//     if(!user?.id){
+//     throw new Error("Unauthorized")
+//     }
+//     const result = await medicineService.createMedicine(req.body,user?.id as string)
+//     res.status(201).json({
+//       success:true,
+//       message:"Medicine Created Successfully",
+//       data:result
+//     })
+//   }
+//   catch (e) {
+//     res.status(400).json({
+//       error: "Medicine Creation Failed",
+//       details: e
+//     })
+//   }
+// }
+
+
 const createMedicine = async (req: Request, res: Response) => {
   try {
-   
-    const user = req.user
+    const user = req.user;
+    console.log(user)
     if(!user?.id){
-    throw new Error("Unauthorized")
+      throw new Error("Unauthorized");
     }
-    const result = await medicineService.createMedicine(req.body,user?.id as string)
+
+    console.log("Request body:", req.body);
+    console.log("Seller ID:", user.id);
+    console.log(req.body)
+    const result = await medicineService.createMedicine(req.body, user.id);
+    
     res.status(201).json({
-      success:true,
-      message:"Medicine Created Successfully",
-      data:result
-    })
-  }
-  catch (e) {
+      success: true,
+      message: "Medicine Created Successfully",
+      data: result
+    });
+  } catch (e: any) {
+    console.error("Create medicine error:", e);
+
     res.status(400).json({
       error: "Medicine Creation Failed",
-      details: e
-    })
+      details: e.message || String(e)  // <-- serialize properly
+    });
   }
 }
 
