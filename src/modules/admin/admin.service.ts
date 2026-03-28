@@ -18,29 +18,30 @@ const getAllOrders = async () => {
     return result
 }
 
-const toggleBanUser = async(userId:string)=>{
+
+const toggleBanUser = async (userId: string) => {
   const existingUser = await prisma.user.findUnique({
-    where:{
-        id:userId
-    }
-  })
+    where: { id: userId },
+  });
 
-   if(!existingUser){
-       throw new Error("Admin can not be banned") 
-    }
+  if (!existingUser) {
+    throw new Error("User not found");
+  }
 
+  // Prevent banning admin
+  if (existingUser.role === "ADMIN") {
+    throw new Error("Admin users cannot be banned");
+  }
 
-    const result = await prisma.user.update({
-        where:{
-            id:userId
-        },
-        data:{
-           isBanned:!existingUser.isBanned
-        }
+  const result = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      isBanned: !existingUser.isBanned,
+    },
+  });
 
-    })
-    return result
-}
+  return result;
+};
 
 const getAllReviews = async()=>{
     const result = await prisma.review.findMany({
@@ -60,6 +61,8 @@ const deleteReview= async(deleteId:string)=>{
     })
     return result
 }
+
+
 
 
 
