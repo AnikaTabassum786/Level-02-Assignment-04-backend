@@ -34,4 +34,30 @@ export const auth = betterAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
         }, 
     },
+
+
+    //Ban
+  hooks: {
+  before: async (ctx) => {
+    const path = (ctx as any).path;
+
+    if (path === "/sign-in/email") {
+      const body = ctx.body as { email?: string } | undefined;
+
+      if (!body?.email) return ctx;
+
+      const existingUser = await prisma.user.findUnique({
+        where: { email: body.email },
+      });
+
+      if (existingUser?.isBanned) {
+        throw new Error("Your account has been banned");
+      }
+    }
+
+    return ctx;
+  },
+
+
+},
 });

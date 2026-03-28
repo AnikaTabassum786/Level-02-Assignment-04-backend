@@ -23,6 +23,7 @@ import { adminRouter } from "./modules/admin/admin.route";
 import { reviewRouter } from "./modules/review/review.route";
 
 
+
 const app:Application = express();
 
 app.use(express.json())
@@ -43,6 +44,7 @@ app.use("/api/profile",profileRouter)
 app.use("/api/admin",adminRouter)
 app.use("/api/review",reviewRouter)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 app.get("/",(req,res)=>{
     res.send("Hello World")
