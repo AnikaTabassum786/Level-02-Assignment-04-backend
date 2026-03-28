@@ -37,7 +37,37 @@ const getAllCategory=async(req: Request, res: Response)=>{
   }
 }
 
+const deleteCategoryById = async (req: Request, res: Response) => {
+  try {
+    const { categoryId } = req.params
+    if (!categoryId) {
+      throw new Error("Category ID is required")
+    }
+    const deletedCategory = await categoryService.deleteCategoryById(categoryId as string)
+
+    if (!deletedCategory) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Category deleted successfully"
+    })
+  }
+  catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Something went wrong",
+    })
+  }
+}
+
+
 export const categoryController = {
   createCategory,
-  getAllCategory
+  getAllCategory,
+  deleteCategoryById
 };
