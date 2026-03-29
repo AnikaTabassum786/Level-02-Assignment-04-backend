@@ -68,7 +68,39 @@ const updateOrderStatusBySeller=async(orderId:string,sellerId:string,status:Orde
     return result
 }
 
+const updateMedicineBySeller = async(medicineId:string, sellerId:string, payload: any)=>{
+       const existingMedicine = await prisma.medicine.findFirst({
+    where: {
+      id: medicineId,
+      sellerId: sellerId,
+    },
+  });
+
+  if (!existingMedicine) {
+    throw new Error("Medicine not found or unauthorized");
+  }
+   const updatedMedicine = await prisma.medicine.update({
+    where: {
+      id: medicineId,
+    },
+    data: {
+      ...(payload.name && { name: payload.name }),
+      ...(payload.description && { description: payload.description }),
+      ...(payload.price && { price: Number(payload.price) }),
+      ...(payload.stock !== undefined && { stock: Number(payload.stock) }),
+      ...(payload.manufacturer && { manufacturer: payload.manufacturer }),
+      ...(payload.imageURL && { imageURL: payload.imageURL }),
+      ...(payload.categoryId && { categoryId: payload.categoryId }),
+    },
+  });
+
+  return updatedMedicine;
+}
+
+
+
 export const SellerService = {
  getSellerOrders,
- updateOrderStatusBySeller
+ updateOrderStatusBySeller,
+ updateMedicineBySeller
 };

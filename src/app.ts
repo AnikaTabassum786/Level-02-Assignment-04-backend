@@ -38,7 +38,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use("/api",medicineRouter)
 app.use("/api/categories",categoryRouter)
 app.use("/api/orders",orderRouter)
-app.use("/api/seller/orders",sellerRouter)
+app.use("/api/seller",sellerRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/profile",profileRouter)
 app.use("/api/admin",adminRouter)

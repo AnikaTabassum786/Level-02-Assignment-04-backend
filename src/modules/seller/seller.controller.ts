@@ -6,17 +6,17 @@ import { OrderStatus, Role } from "../../../generated/prisma/enums"
 
 const getSellerOrders = async (req: Request, res: Response) => {
     try {
-        if(!req.user || req.user.role !== Role.SELLER){
+        if (!req.user || req.user.role !== Role.SELLER) {
             throw new Error("Unauthorized")
         }
         const user = req.user
-        console.log("Seller is",user)
+        console.log("Seller is", user)
         const result = await SellerService.getSellerOrders(user!.id as string)
         res.status(200).json({
-            success:true,
-            count:result.length,
-            message:"Fetched Order Successfully",
-            data:result
+            success: true,
+            count: result.length,
+            message: "Fetched Order Successfully",
+            data: result
         })
     }
     catch (error: any) {
@@ -27,34 +27,34 @@ const getSellerOrders = async (req: Request, res: Response) => {
     }
 }
 
-const updateOrderStatusBySeller= async(req: Request, res: Response)=>{
-    try{
-       const {orderId} = req.params
-       const user = req.user
-       const {status} = req.body
+const updateOrderStatusBySeller = async (req: Request, res: Response) => {
+    try {
+        const { orderId } = req.params
+        const user = req.user
+        const { status } = req.body
 
-       if(!user || user.role !== Role.SELLER){
+        if (!user || user.role !== Role.SELLER) {
             throw new Error("Unauthorized")
         }
 
-        if(!status){
-         throw new Error("Status is required")
+        if (!status) {
+            throw new Error("Status is required")
         }
 
         const updatedStatus = status.trim().toUpperCase()
 
-        if(!Object.values(OrderStatus).includes(updatedStatus as OrderStatus)){
+        if (!Object.values(OrderStatus).includes(updatedStatus as OrderStatus)) {
             throw new Error("Invalid Status")
         }
 
-       const result = await SellerService.updateOrderStatusBySeller(orderId as string, user!.id as string,status)
-    res.status(200).json({
-      success: true,
-       message:"Update Order Successfully",
-      data: result
-    })
+        const result = await SellerService.updateOrderStatusBySeller(orderId as string, user!.id as string, status)
+        res.status(200).json({
+            success: true,
+            message: "Update Order Successfully",
+            data: result
+        })
     }
-     catch (error: any) {
+    catch (error: any) {
         res.status(400).json({
             success: false,
             message: error.message || "Order Updated failed",
@@ -62,8 +62,34 @@ const updateOrderStatusBySeller= async(req: Request, res: Response)=>{
     }
 }
 
+const updateMedicineBySeller = async (req: Request, res: Response) => {
+    try {
+        const { medicineId } = req.params
+        const user = req.user
+
+        if (!user || user.role !== Role.SELLER) {
+            throw new Error("Unauthorized")
+        }
+
+        const result = await SellerService.updateMedicineBySeller(medicineId as string, user!.id as string, req.body)
+        res.status(200).json({
+            success: true,
+            message: "Update Medicine Successfully",
+            data: result
+        })
+    }
+    catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message || "Medicine Updated failed",
+        })
+    }
+}
+
+
 export const SellerController = {
     getSellerOrders,
-    updateOrderStatusBySeller
-    
+    updateOrderStatusBySeller,
+    updateMedicineBySeller,
+
 }
