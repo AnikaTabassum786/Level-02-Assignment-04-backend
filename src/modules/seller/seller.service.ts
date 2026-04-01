@@ -28,44 +28,58 @@ const getSellerOrders = async(sellerId:string)=>{
             }
         },
         include:{
-            medicine:true
+            medicine:true,
         }
      }
+    },
+    orderBy:{
+      createdAt:"desc"
     }
  })
  return result
 }
 
 
-const updateOrderStatusBySeller=async(orderId:string,sellerId:string,status:OrderStatus)=>{
-    // console.log("Get Seller Order By Id",orderId)
-    const orderResult = await prisma.order.findFirst({ // matches id with orderId,orderItem with medicine,medicine with seller
-        where:{
-        id:orderId,
-        orderItems:{
-            some:{
-                medicine:{
-                    sellerId:sellerId //At least one related record. It works like EXISTS 
-                }
-            }
+const updateOrderStatusBySeller = async (
+  orderId: string,
+  sellerId: string,
+  status: OrderStatus
+) => {
+
+  // 🔍 Check order belongs to this seller
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      orderItems: {
+        include: {
+          medicine: true
         }
+      }
     }
-    })
+  })
 
-    if(!orderResult){
-        throw new Error("Order not found or not authorized")
+  if (!order) {
+    throw new Error("Order not found")
+  }
+
+  // 🔒 Ensure seller owns at least one medicine in order
+  const isSellerOrder = order.orderItems.some(
+    item => item.medicine.sellerId === sellerId
+  )
+
+  if (!isSellerOrder) {
+    throw new Error("You are not allowed to update this order")
+  }
+
+  // ✅ Update order status
+  const updatedOrder = await prisma.order.update({
+    where: { id: orderId },
+    data: {
+      status
     }
+  })
 
-    const result = await prisma.order.update({
-        where:{
-            id:orderId
-        },
-        data:{
-            status:status
-        }
-    })
-
-    return result
+  return updatedOrder
 }
 
 const updateMedicineBySeller = async(medicineId:string, sellerId:string, payload: any)=>{

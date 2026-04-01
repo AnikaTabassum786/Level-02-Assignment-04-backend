@@ -9,4 +9,5 @@ router.patch("/orders/:orderId",auth(Role.SELLER),SellerController.updateOrderSt
 router.put("/medicines/:medicineId",auth(Role.SELLER),SellerController.updateMedicineBySeller)
 
 
+
 export const sellerRouter:Router = router
