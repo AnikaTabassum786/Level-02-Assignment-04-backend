@@ -2,12 +2,8 @@
 import fs from "fs";
 import path from "path";
 
-const uploadsDir = path.join(__dirname, "uploads");
-
 // Create uploads folder if it doesn't exist
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+
 
 import express, { Application } from "express"
 import { toNodeHandler } from "better-auth/node";
@@ -33,6 +29,15 @@ origin:process.env.APP_URL || "http://localhost:3000",
 credentials: true
 }))
 
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// app.use(
+//   "/uploads",
+//   express.static(path.join(__dirname, "../uploads"))
+// );
+
+console.log("Uploads path:", path.join(__dirname, "uploads"));
+
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use("/api",medicineRouter)
@@ -43,7 +48,13 @@ app.use("/api/cart",cartRouter)
 app.use("/api/profile",profileRouter)
 app.use("/api/admin",adminRouter)
 app.use("/api/review",reviewRouter)
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+const uploadsDir = path.join(process.cwd(), "uploads");
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 
 app.get("/",(req,res)=>{

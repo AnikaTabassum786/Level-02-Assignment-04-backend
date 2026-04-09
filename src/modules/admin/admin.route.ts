@@ -10,6 +10,7 @@ router.patch("/users/:userId/status",auth(Role.ADMIN),adminController.toggleBanU
 router.get("/orders",auth(Role.ADMIN),adminController.getAllOrders)
 router.get("/reviews",auth(Role.ADMIN),adminController.getAllReviews)
 router.delete("/review/:deleteId",auth(Role.ADMIN),adminController.deleteReview)
+router.delete("/orders/:deleteId",auth(Role.ADMIN),adminController.deleteOrder)
 
 
 export const adminRouter:Router = router

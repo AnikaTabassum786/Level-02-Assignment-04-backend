@@ -28,33 +28,71 @@ import { success } from "better-auth/*"
 // }
 
 
+// const createMedicine = async (req: Request, res: Response) => {
+//   try {
+//     const user = req.user;
+//     console.log(user)
+//     if(!user?.id){
+//       throw new Error("Unauthorized");
+//     }
+
+//     console.log("Request body:", req.body);
+//     console.log("Seller ID:", user.id);
+//     console.log(req.body)
+//     const result = await medicineService.createMedicine(req.body, user.id);
+    
+//     res.status(201).json({
+//       success: true,
+//       message: "Medicine Created Successfully",
+//       data: result
+//     });
+//   } catch (e: any) {
+//     console.error("Create medicine error:", e);
+
+//     res.status(400).json({
+//       error: "Medicine Creation Failed",
+//       details: e.message || String(e)  // <-- serialize properly
+//     });
+//   }
+// }
+
 const createMedicine = async (req: Request, res: Response) => {
   try {
     const user = req.user;
-    console.log(user)
-    if(!user?.id){
+
+    if (!user?.id) {
       throw new Error("Unauthorized");
     }
 
-    console.log("Request body:", req.body);
-    console.log("Seller ID:", user.id);
-    console.log(req.body)
-    const result = await medicineService.createMedicine(req.body, user.id);
-    
+    // const file = req.file;
+    // const imageURL = file ? `/uploads/${file.filename}` : undefined;
+
+    const file = req.file;
+
+const imageURL = file ? `/uploads/${file.filename}` : undefined;
+
+    const result = await medicineService.createMedicine(
+      {
+        ...req.body,
+        price: Number(req.body.price),
+        stock: Number(req.body.stock),
+        imageURL,
+      },
+      user.id
+    );
+
     res.status(201).json({
       success: true,
       message: "Medicine Created Successfully",
-      data: result
+      data: result,
     });
   } catch (e: any) {
-    console.error("Create medicine error:", e);
-
     res.status(400).json({
       error: "Medicine Creation Failed",
-      details: e.message || String(e)  // <-- serialize properly
+      details: e.message || String(e),
     });
   }
-}
+};
 
 const getAllMedicine = async (req: Request, res: Response) => {
   try {
@@ -149,9 +187,9 @@ const updateMedicineById = async (req: Request, res: Response) => {
     const user = req.user;
     const data = { ...req.body };
 
-    if (req.file) {
-      data.imageURL = `/uploads/${req.file.filename}`;
-    }
+    // if (req.file) {
+    //   data.imageURL = `/uploads/${req.file.filename}`;
+    // }
 
     const updatedMedicine = await medicineService.updateMedicineById(
       medicineId,

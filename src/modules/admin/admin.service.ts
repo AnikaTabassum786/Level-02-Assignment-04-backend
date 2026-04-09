@@ -62,6 +62,16 @@ const deleteReview= async(deleteId:string)=>{
     return result
 }
 
+const deleteOrder= async(deleteId:string)=>{
+    // console.log("Delete User",deleteId)
+    const result = await prisma.order.delete({
+        where:{
+            id:deleteId
+        }
+    })
+    return result
+}
+
 
 
 
@@ -71,5 +81,6 @@ export const adminService = {
     getAllOrders,
     toggleBanUser,
     getAllReviews,
-    deleteReview
+    deleteReview,
+    deleteOrder
 };

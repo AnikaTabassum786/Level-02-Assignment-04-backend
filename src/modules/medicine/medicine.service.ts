@@ -67,11 +67,11 @@ const getAllMedicine = async (payload: {
         ];
     }
 
-    if (payload.price !== undefined) {
-        whereCondition.price = {
-            equals: payload.price
-        }
-    }
+    // if (payload.price !== undefined) {
+    //     whereCondition.price = {
+    //         equals: payload.price
+    //     }
+    // }
 
     // if (payload.minPrice !== undefined || payload.maxPrice !== undefined) {
     //     whereCondition.price = {
@@ -93,6 +93,23 @@ const getAllMedicine = async (payload: {
     //   }
     // }
 
+//     if (payload.minPrice !== undefined ||payload.maxPrice !== undefined) {
+//     whereCondition.price = {};
+
+//     if (payload.minPrice !== undefined) {
+//       whereCondition.price.gte = payload.minPrice;
+//     }
+
+//     if (payload.maxPrice !== undefined) {
+//       whereCondition.price.lte = payload.maxPrice;
+//     }
+//   } else if (payload.price !== undefined) {
+//     whereCondition.price = {
+//       equals: payload.price,
+//     };
+//   }
+
+
     if (payload.category) {
         whereCondition.category = {
             name: {
@@ -100,6 +117,13 @@ const getAllMedicine = async (payload: {
                 mode: "insensitive",
             },
         };
+    }
+
+    if (payload.manufacturer) {
+        whereCondition.manufacturer = {
+            contains: payload.manufacturer,
+            mode: "insensitive",
+        }
     }
 
     const total = await prisma.medicine.count({

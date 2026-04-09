@@ -57,7 +57,7 @@ const auth = (...roles: Role[]) => {
             })
         }
 
-        //  if (user.isBanned) {
+        //  if (req.user.isBanned) {
         //    throw new Error("Your account has been banned. Contact admin.")
         // }
 
