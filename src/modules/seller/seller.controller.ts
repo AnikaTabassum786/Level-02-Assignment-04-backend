@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { SellerService } from "./seller.service"
-import { OrderStatus, Role } from "../../../generated/prisma/enums"
+import { OrderStatus, Role } from "../../generated/enums"
+// import { OrderStatus, Role } from "../../generated/prisma/enums"
 
 
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { medicineService } from "./medicine.service"
 import paginationHelper from "../../helpers/Pagination"
-import { success } from "better-auth/*"
+// import { success } from "better-auth/*"
 
 
 
@@ -64,19 +64,13 @@ const createMedicine = async (req: Request, res: Response) => {
       throw new Error("Unauthorized");
     }
 
-    // const file = req.file;
-    // const imageURL = file ? `/uploads/${file.filename}` : undefined;
-
-    const file = req.file;
-
-const imageURL = file ? `/uploads/${file.filename}` : undefined;
 
     const result = await medicineService.createMedicine(
       {
         ...req.body,
         price: Number(req.body.price),
         stock: Number(req.body.stock),
-        imageURL,
+       
       },
       user.id
     );

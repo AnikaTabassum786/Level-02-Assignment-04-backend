@@ -21,7 +21,7 @@ router.get('/medicines/:medicineId',MedicineController. getMedicineById)
 router.patch(
   "/seller/medicines/:medicineId",
   auth(Role.SELLER),
-  // upload.single("image"),
+
   MedicineController.updateMedicineById
 )
 router.delete('/seller/medicines/:medicineId',auth(Role.SELLER),MedicineController.deleteMedicineById)

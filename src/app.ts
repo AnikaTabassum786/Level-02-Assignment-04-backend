@@ -7,6 +7,7 @@ import path from "path";
 
 import express, { Application } from "express"
 import { toNodeHandler } from "better-auth/node";
+import cookieParser from "cookie-parser";
 import { auth } from './lib/auth';
 import cors from 'cors'
 import { medicineRouter } from "./modules/medicine/medicine.router";
@@ -24,19 +25,14 @@ const app:Application = express();
 
 app.use(express.json())
 
+app.use(cookieParser());
 app.use(cors({
-origin:process.env.APP_URL || "http://localhost:3000",
+// origin:process.env.APP_URL || "http://localhost:3000",
+origin:process.env.APP_URL,
 credentials: true
 }))
 
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// app.use(
-//   "/uploads",
-//   express.static(path.join(__dirname, "../uploads"))
-// );
-
-console.log("Uploads path:", path.join(__dirname, "uploads"));
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
@@ -50,11 +46,6 @@ app.use("/api/admin",adminRouter)
 app.use("/api/review",reviewRouter)
 
 
-const uploadsDir = path.join(process.cwd(), "uploads");
-
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 
 app.get("/",(req,res)=>{

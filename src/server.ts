@@ -1,7 +1,12 @@
+if (process.env.NODE_ENV !== "production") {
+  await import("dotenv").then((dotenv) => dotenv.config());
+}
+
 import app from "./app";
 import { prisma } from "./lib/prisma";
 
-const PORT = process.env.PORT || 5000
+// const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT
 
 async function main() {
     try {

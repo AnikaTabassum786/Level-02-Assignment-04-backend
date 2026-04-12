@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
+import { oAuthProxy } from "better-auth/plugins";
 // If your Prisma file is located elsewhere, you can change the path
 
 
@@ -9,6 +10,7 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql", // or "mysql", "postgresql", ...etc
     }),
+      baseURL: process.env.APP_URL,
     trustedOrigins:[process.env.APP_URL!],
     user:{
        additionalFields:{
@@ -36,28 +38,30 @@ export const auth = betterAuth({
     },
 
 
-    //Ban
-//   hooks: {
-//   before: async (ctx) => {
-//     const path = (ctx as any).path;
+advanced: {
+    cookies: {
+      session_token: {
+        name: "session_token", // Force this exact name
+        attributes: {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          partitioned: true,
+        },
+      },
+      state: {
+        name: "session_token", // Force this exact name
+        attributes: {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          partitioned: true,
+        },
+      },
+    },
+  },
 
-//     if (path === "/sign-in/email") {
-//       const body = ctx.body as { email?: string } | undefined;
-
-//       if (!body?.email) return ctx;
-
-//       const existingUser = await prisma.user.findUnique({
-//         where: { email: body.email },
-//       });
-
-//       if (existingUser?.isBanned) {
-//         throw new Error("Your account has been banned");
-//       }
-//     }
-
-//     return ctx;
-//   },
-// },
+  plugins: [oAuthProxy()],
 
 
 
