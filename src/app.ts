@@ -23,7 +23,7 @@ import { reviewRouter } from "./modules/review/review.route";
 
 const app:Application = express();
 
-app.use(express.json())
+
 
 app.use(cookieParser());
 app.use(cors({
@@ -35,7 +35,7 @@ credentials: true
 
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
-
+app.use(express.json())
 app.use("/api",medicineRouter)
 app.use("/api/categories",categoryRouter)
 app.use("/api/orders",orderRouter)

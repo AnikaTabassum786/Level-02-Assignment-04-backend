@@ -35,12 +35,12 @@ const auth = (...roles: Role[]) => {
             })
         }
 
-        if (!session.user.emailVerified) {
-            return res.status(401).json({
-                success: false,
-                message: "Email verification required. Please verify your email!"
-            })
-        }
+        // if (!session.user.emailVerified) {
+        //     return res.status(401).json({
+        //         success: false,
+        //         message: "Email verification required. Please verify your email!"
+        //     })
+        // }
 
         req.user = {
             id: session.user.id,
