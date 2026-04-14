@@ -6,90 +6,90 @@ interface CreatedCartPayload{
    quantity: number;
 }
 
-const createCart = async (payload:CreatedCartPayload,userId:string) => {
-   const {medicineId,quantity} = payload;
+// const createCart = async (payload:CreatedCartPayload,userId:string) => {
+//    const {medicineId,quantity} = payload;
 
-   if(!medicineId || !quantity){
-    throw new Error("Medicine Id and quantity are required")
-   }
+//    if(!medicineId || !quantity){
+//     throw new Error("Medicine Id and quantity are required")
+//    }
 
-   if(quantity <= 0){
-    throw new Error("Quantity must be grater than 0")
-   }
+//    if(quantity <= 0){
+//     throw new Error("Quantity must be grater than 0")
+//    }
 
-   const medicine = await prisma.medicine.findUnique({
-    where:{
-      id:medicineId
-    }
-   })
+//    const medicine = await prisma.medicine.findUnique({
+//     where:{
+//       id:medicineId
+//     }
+//    })
 
-   if(!medicine){
-    throw new Error("Medicine not found")
-   }
+//    if(!medicine){
+//     throw new Error("Medicine not found")
+//    }
 
-   if(medicine.stock < quantity){
-    throw new Error("Insufficient Stock")
-   }
+//    if(medicine.stock < quantity){
+//     throw new Error("Insufficient Stock")
+//    }
 
-   let cart = await prisma.cart.findUnique({
-    where:{
-      userId
-    }
-   })
+//    let cart = await prisma.cart.findUnique({
+//     where:{
+//       userId
+//     }
+//    })
 
-   if(!cart){
-    cart = await prisma.cart.create({
-      data:{userId}
-    })
-   }
+//    if(!cart){
+//     cart = await prisma.cart.create({
+//       data:{userId}
+//     })
+//    }
 
-   const existingItem = await prisma.cartItem.findFirst(
-    {
-      where:{
-        cartId:cart.id,
-        medicineId
-      }
-    })
+//    const existingItem = await prisma.cartItem.findFirst(
+//     {
+//       where:{
+//         cartId:cart.id,
+//         medicineId
+//       }
+//     })
 
-    if(existingItem){
-      if(medicine.stock < existingItem.quantity+quantity){
-        throw new Error("Stock Limit exceeded")
-      }
-    }
+//     if(existingItem){
+//       if(medicine.stock < existingItem.quantity+quantity){
+//         throw new Error("Stock Limit exceeded")
+//       }
+//     }
 
 
-  if(existingItem){
-     const updateCartItem = await prisma.cartItem.update({
-      where:{id:existingItem.id},
-      data:{
-        quantity:existingItem?.quantity+quantity
-      }
-    })
+//   if(existingItem){
+//      const updateCartItem = await prisma.cartItem.update({
+//       where:{id:existingItem.id},
+//       data:{
+//         quantity:existingItem?.quantity+quantity
+//       }
+//     })
 
-    //  await prisma.medicine.update({
-    //   where: { id: medicineId },
-    //   data: { stock: medicine.stock - quantity },
-    // });
+//     //  await prisma.medicine.update({
+//     //   where: { id: medicineId },
+//     //   data: { stock: medicine.stock - quantity },
+//     // });
 
-    return updateCartItem
-  }
+//     return updateCartItem
+//   }
 
-  const result = await prisma.cartItem.create({
-    data:{
-      cartId:cart.id,
-      medicineId,
-      quantity
-    }
-  })
+//   const result = await prisma.cartItem.create({
+//     data:{
+//       cartId:cart.id,
+//       medicineId,
+//       quantity
+//     }
+//   })
 
-  //   await prisma.medicine.update({
-  //   where: { id: medicineId },
-  //   data: { stock: medicine.stock - quantity },
-  // });
+//   //   await prisma.medicine.update({
+//   //   where: { id: medicineId },
+//   //   data: { stock: medicine.stock - quantity },
+//   // });
 
-  return result
+//   return result
  
-};
+// };
 
 // const deleteCart = async(cartId:string,customerId:string,role:string)=>{
 // // console.log("delete cart")
@@ -116,6 +116,75 @@ const createCart = async (payload:CreatedCartPayload,userId:string) => {
 
 // return result
 // }
+
+const createCart = async (
+  payload: CreatedCartPayload,
+  userId: string
+) => {
+  const { medicineId, quantity } = payload;
+
+
+  if (!medicineId || !quantity) {
+    throw new Error("Medicine Id and quantity are required");
+  }
+
+  if (quantity <= 0) {
+    throw new Error("Quantity must be greater than 0");
+  }
+
+  const medicine = await prisma.medicine.findUnique({
+    where: { id: medicineId },
+  });
+
+  if (!medicine) {
+    throw new Error("Medicine not found");
+  }
+
+  let cart = await prisma.cart.findUnique({
+    where: { userId },
+  });
+
+  if (!cart) {
+    cart = await prisma.cart.create({
+      data: { userId },
+    });
+  }
+
+
+  const existingItem = await prisma.cartItem.findFirst({
+    where: {
+      cartId: cart.id,
+      medicineId,
+    },
+  });
+
+ 
+  const totalQuantity = existingItem
+    ? existingItem.quantity + quantity
+    : quantity;
+
+  if (medicine.stock < totalQuantity) {
+    throw new Error("Stock limit exceeded");
+  }
+
+  if (existingItem) {
+    return await prisma.cartItem.update({
+      where: { id: existingItem.id },
+      data: {
+        quantity: totalQuantity,
+      },
+    });
+  }
+
+ 
+  return await prisma.cartItem.create({
+    data: {
+      cartId: cart.id,
+      medicineId,
+      quantity,
+    },
+  });
+};
 
 const getAllOwnCartItems = async(customerId:string)=>{
     const cart = await prisma.cart.findUnique({
