@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node api/index.js",
     "dev": "npx tsx watch src/server.ts",
-    "build": "npx prisma generate && tsup src/index.ts --format esm --platform node --target node20 --outDir api --external pg-native",
+    "build": "tsup",
     "seed:admin": "npx tsx src/scripts/seedAdmin.ts",
     "postinstall": "prisma generate"
   },
@@ -21,13 +22,13 @@
     "@types/node": "^25.3.0",
     "@types/pg": "^8.16.0",
     "dotenv": "^17.3.1",
-    "prisma": "^7.4.1",
+    "prisma": "^7.7.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.1",
-    "@prisma/client": "^7.4.1",
+    "@prisma/client": "^7.7.0",
     "better-auth": "^1.4.18",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

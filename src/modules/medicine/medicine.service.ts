@@ -1,4 +1,5 @@
-import { Medicine } from "../../generated/prisma/client";
+// import { Medicine } from "../../generated/prisma/client";
+import { Medicine } from "../../generated/client";
 import { prisma } from "../../lib/prisma"
 
 

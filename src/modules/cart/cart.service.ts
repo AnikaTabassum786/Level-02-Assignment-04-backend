@@ -82,10 +82,10 @@ const createCart = async (payload:CreatedCartPayload,userId:string) => {
     }
   })
 
-    await prisma.medicine.update({
-    where: { id: medicineId },
-    data: { stock: medicine.stock - quantity },
-  });
+  //   await prisma.medicine.update({
+  //   where: { id: medicineId },
+  //   data: { stock: medicine.stock - quantity },
+  // });
 
   return result
  
