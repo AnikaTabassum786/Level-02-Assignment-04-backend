@@ -1337,67 +1337,47 @@ var createCart = async (payload, userId) => {
     throw new Error("Medicine Id and quantity are required");
   }
   if (quantity <= 0) {
-    throw new Error("Quantity must be grater than 0");
+    throw new Error("Quantity must be greater than 0");
   }
   const medicine = await prisma.medicine.findUnique({
-    where: {
-      id: medicineId
-    }
+    where: { id: medicineId }
   });
   if (!medicine) {
     throw new Error("Medicine not found");
   }
-  if (medicine.stock < quantity) {
-    throw new Error("Insufficient Stock");
-  }
   let cart = await prisma.cart.findUnique({
-    where: {
-      userId
-    }
+    where: { userId }
   });
   if (!cart) {
     cart = await prisma.cart.create({
       data: { userId }
     });
   }
-  const existingItem = await prisma.cartItem.findFirst(
-    {
-      where: {
-        cartId: cart.id,
-        medicineId
-      }
+  const existingItem = await prisma.cartItem.findFirst({
+    where: {
+      cartId: cart.id,
+      medicineId
     }
-  );
-  if (existingItem) {
-    if (medicine.stock < existingItem.quantity + quantity) {
-      throw new Error("Stock Limit exceeded");
-    }
+  });
+  const totalQuantity = existingItem ? quantity : quantity;
+  if (medicine.stock < totalQuantity) {
+    throw new Error("Stock limit exceeded");
   }
   if (existingItem) {
-    const updateCartItem = await prisma.cartItem.update({
+    return await prisma.cartItem.update({
       where: { id: existingItem.id },
       data: {
-        quantity: existingItem?.quantity + quantity
+        quantity: totalQuantity
       }
     });
-    await prisma.medicine.update({
-      where: { id: medicineId },
-      data: { stock: medicine.stock - quantity }
-    });
-    return updateCartItem;
   }
-  const result = await prisma.cartItem.create({
+  return await prisma.cartItem.create({
     data: {
       cartId: cart.id,
       medicineId,
       quantity
     }
   });
-  await prisma.medicine.update({
-    where: { id: medicineId },
-    data: { stock: medicine.stock - quantity }
-  });
-  return result;
 };
 var getAllOwnCartItems = async (customerId) => {
   const cart = await prisma.cart.findUnique({

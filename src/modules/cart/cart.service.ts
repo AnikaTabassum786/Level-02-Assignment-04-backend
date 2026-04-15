@@ -160,7 +160,7 @@ const createCart = async (
 
  
   const totalQuantity = existingItem
-    ? existingItem.quantity + quantity
+    ?   quantity
     : quantity;
 
   if (medicine.stock < totalQuantity) {
