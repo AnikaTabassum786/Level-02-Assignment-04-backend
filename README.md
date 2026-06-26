@@ -33,3 +33,5 @@ Customer can
 •Track order status
 •Leave reviews after ordering
 •Manage profile
+
+Technologies: React.js, Node.js, Express.js, PostgreSQL (NeonDB), Prisma, Tailwind CSS, JWT.
